@@ -1,0 +1,126 @@
+﻿@model DataTransfer.Prepros.Models.PropertyImages
+@{
+    ViewBag.Title = Model.PropertyCode;
+}
+
+<div class="main-wraper">
+    <div class="container">
+        <div class="iner-wrapper">
+            <div class="row">
+                <div class="col-md-12 text-center">
+                    <h2 class="main-heading text-white">@Model.PropertyCode.ToUpper()</h2>
+                    <span class="back-arrow">
+                        <a href="@Url.Action("Index", "Properties")">
+                            <i class="fa fa-long-arrow-left" aria-hidden="true"></i>
+                        </a>
+                    </span>
+                </div>
+            </div>
+            <div class="scroll-div custom-scroll">
+                <div class="row side-scroll custom-scroll">
+                    <div class="col-md-12 h-100">
+                        <div class="image-wraper h-100">
+                            @foreach (var property in Model.Images.Distinct())
+                            {
+                                <div class="image-box">
+                                    <div class="position-relative">
+                                        <img src="~/Content/Properties/@($"{property.PropertyCode}/{property.ImageID}.JPG")" alt="@property.PropertyCode" onerror="this.onerror=null;this.src='/Content/Images/no-image.PNG';" />
+                                        <h5>@property.ImageID</h5>
+                                    </div>
+                                </div>
+                            }
+                            @if (Model.Images.Count() == 0)
+                            {
+                                <b>No Records Available.</b>
+                            }
+                        </div>
+                        <div class="lightbox">
+                            <div class="title"></div>
+                            <div class="filter"></div>
+                            <!-- <div class="arrowr"></div>
+                               <div class="arrowl"></div> -->
+                            <div class="close"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12 text-center">
+                    <button class="btn" type="button"><a class="classify" href="@Url.Action("Detail","Properties",new { code = Model.PropertyCode })">Classify & Rank &nbsp;&nbsp;<i class="fa fa-arrow-right ml-1" aria-hidden="true"></i></a></button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        $(".image-wraper img").click(function () {
+            $(".lightbox").fadeIn(300);
+            $(".lightbox").append("<img src='" + $(this).attr("src") + "' alt='" + $(this).attr("alt") + "' />");
+            $(".filter").css("background-image", "url(" + $(this).attr("src") + ")");
+            /*$(".title").append("<h1>" + $(this).attr("alt") + "</h1>");*/
+            $("html").css("overflow", "hidden");
+            if ($(this).is(":last-child")) {
+                $(".arrowr").css("display", "none");
+                $(".arrowl").css("display", "block");
+            } else if ($(this).is(":first-child")) {
+                $(".arrowr").css("display", "block");
+                $(".arrowl").css("display", "none");
+            } else {
+                $(".arrowr").css("display", "block");
+                $(".arrowl").css("display", "block");
+            }
+        });
+
+        $(".close").click(function () {
+            $(".lightbox").fadeOut(300);
+            $("h1").remove();
+            $(".lightbox img").remove();
+            $("html").css("overflow", "auto");
+        });
+
+        $(document).keyup(function (e) {
+            if (e.keyCode == 27) {
+                $(".lightbox").fadeOut(300);
+                $(".lightbox img").remove();
+                $("html").css("overflow", "auto");
+            }
+        });
+
+        $(".arrowr").click(function () {
+            var imgSrc = $(".lightbox img").attr("src");
+            var search = $(".image-wraper").find("img[src$='" + imgSrc + "']");
+            var newImage = search.next().attr("src");
+            /*$(".lightbox img").attr("src", search.next());*/
+            $(".lightbox img").attr("src", newImage);
+            $(".filter").css("background-image", "url(" + newImage + ")");
+
+            if (!search.next().is(":last-child")) {
+                $(".arrowl").css("display", "block");
+            } else {
+                $(".arrowr").css("display", "none");
+            }
+        });
+
+        $(".arrowl").click(function () {
+            var imgSrc = $(".lightbox img").attr("src");
+            var search = $(".image-wraper").find("img[src$='" + imgSrc + "']");
+            var newImage = search.prev().attr("src");
+            /*$(".lightbox img").attr("src", search.next());*/
+            $(".lightbox img").attr("src", newImage);
+            $(".filter").css("background-image", "url(" + newImage + ")");
+
+            if (!search.prev().is(":first-child")) {
+                $(".arrowr").css("display", "block");
+            } else {
+                $(".arrowl").css("display", "none");
+            }
+        });
+
+    });
+</script>
+
+
+
+
